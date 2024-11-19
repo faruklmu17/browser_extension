@@ -1,5 +1,5 @@
 Test Results:
 Total Tests: 100
-Passed: 80
-Failed: 20
+Passed: 70
+Failed: 30
 -------------------

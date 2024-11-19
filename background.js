@@ -10,4 +10,4 @@ chrome.runtime.onInstalled.addListener(function () {
       }
     });
   });
-  
+  // this version is working as expected
