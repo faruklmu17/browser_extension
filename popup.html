@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Tracker</title>
+  <style>
+    body {
+      width: 200px;
+      height: 100px;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevents scrollbars */
+      font-family: Arial, sans-serif;
+      font-size: 20px; /* Increase the default font size */
+    }
+
+    h1 {
+      font-size: 24px; /* Specific size for headers */
+    }
+
+    .stat {
+      font-size: 18px; /* Specific size for paragraph text */
+    }
+  </style>
+</head>
+<body>
+    <h1>Test Results</h1>
+  
+    <!-- File input for uploading the text file -->
+    <input type="file" id="fileInput" accept=".txt" />
+
+    <div class="stat">Total Tests Run: <span id="tests-run">0</span></div>
+    <div class="stat">Total Tests Failed: <span id="tests-failed">0</span></div>
+    <div class="stat">Total Tests Passed: <span id="tests-passed">0</span></div>
+    
+</body>
+<script src="popup.js"></script>
+</html>
