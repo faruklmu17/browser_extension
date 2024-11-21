@@ -5,35 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test Tracker</title>
   <style>
-    body {
-      width: 200px;
-      height: 100px;
+    /* Reset and base styles */
+    * {
       margin: 0;
       padding: 0;
-      overflow: hidden; /* Prevents scrollbars */
-      font-family: Arial, sans-serif;
-      font-size: 20px; /* Increase the default font size */
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 300px;
+      height: 350px; /* Adjusted size for better visibility */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #007bff, #6f42c1);
+      color: #fff;
     }
 
     h1 {
-      font-size: 24px; /* Specific size for headers */
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-align: center;
+      text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    #fileInput {
+      margin: 15px 0;
+      padding: 8px 15px;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+
+    #fileInput:hover {
+      background-color: rgba(255, 255, 255, 0.3);
     }
 
     .stat {
-      font-size: 18px; /* Specific size for paragraph text */
+      font-size: 18px;
+      margin: 8px 0;
+      padding: 10px 15px;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+      width: 90%;
+    }
+
+    .stat span {
+      font-weight: bold;
+      color: #ffc107;
+    }
+
+    footer {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #ddd;
     }
   </style>
 </head>
 <body>
-    <h1>Test Results</h1>
+  <h1>Test Tracker</h1>
   
-    <!-- File input for uploading the text file -->
-    <input type="file" id="fileInput" accept=".txt" />
+  <!-- File input for uploading the text file -->
+  <input type="file" id="fileInput" accept=".txt" />
 
-    <div class="stat">Total Tests Run: <span id="tests-run">0</span></div>
-    <div class="stat">Total Tests Failed: <span id="tests-failed">0</span></div>
-    <div class="stat">Total Tests Passed: <span id="tests-passed">0</span></div>
-    
+  <div class="stat">Total Tests Run: <span id="tests-run">0</span></div>
+  <div class="stat">Total Tests Passed: <span id="tests-passed">0</span></div>
+  <div class="stat">Total Tests Failed: <span id="tests-failed">0</span></div>
+
+  <footer>Powered by Playwright</footer>
 </body>
 <script src="popup.js"></script>
 </html>
