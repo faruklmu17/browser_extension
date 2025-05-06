@@ -1,67 +1,71 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Load results when the popup opens
-    loadTestResults();
-  
-    // Attach the file input listener each time the popup is loaded
-    const fileInput = document.getElementById('fileInput');
-    fileInput.addEventListener('change', handleFileUpload);
-  });
-  
-  function handleFileUpload(event) {
-    const file = event.target.files[0];
-  
-    if (file) {
-      console.log('File selected:', file.name);
-      const reader = new FileReader();
-  
-      reader.onload = function (readerEvent) {
-        const fileContent = readerEvent.target.result;
-        console.log('File content:', fileContent);
-        parseTextTestResults(fileContent);
-      };
-  
-      reader.readAsText(file);
-    }
-  }
-  
-  function parseTextTestResults(content) {
-    console.log('Parsing content:', content);
-  
-    const testsRunMatch = content.match(/Total Tests: (\d+)/);
-    const testsPassedMatch = content.match(/Passed: (\d+)/);
-    const testsFailedMatch = content.match(/Failed: (\d+)/);
-  
-    let testsRun = testsRunMatch ? parseInt(testsRunMatch[1]) : 0;
-    let testsPassed = testsPassedMatch ? parseInt(testsPassedMatch[1]) : 0;
-    let testsFailed = testsFailedMatch ? parseInt(testsFailedMatch[1]) : 0;
-  
-    console.log('Parsed Results:');
-    console.log('Tests Run:', testsRun);
-    console.log('Tests Passed:', testsPassed);
-    console.log('Tests Failed:', testsFailed);
-  
-    // Store results in chrome.storage
-    chrome.storage.local.set({
-      testsRun: testsRun,
-      testsPassed: testsPassed,
-      testsFailed: testsFailed
-    }, function () {
-      // Reload the results after storing
-      loadTestResults();
+// Function to calculate the number of passed and failed tests
+function calculateResults(data) {
+  let passed = 0;
+  let failed = 0;
+
+  // Check if the 'rows' array exists and is an array
+  if (data.rows && Array.isArray(data.rows)) {
+    data.rows.forEach((suite) => {
+      suite.subs.forEach((spec) => {
+        spec.subs.forEach((test) => {
+          // Count 'passed' and 'failed' results based on test status
+          if (test.status === "passed") {
+            passed++;
+          } else if (test.status === "failed") {
+            failed++;
+          }
+        });
+      });
     });
   }
+
+  return { passed, failed };
+}
+
+// When the popup is opened, fetch the test results from the GitHub URL
+document.addEventListener('DOMContentLoaded', () => {
+  const resultsDiv = document.getElementById('results');
   
-  function loadTestResults() {
-    // Retrieve the stored results from chrome.storage
-    chrome.storage.local.get(['testsRun', 'testsPassed', 'testsFailed'], function (result) {
-      const testsRun = result.testsRun || 0;
-      const testsPassed = result.testsPassed || 0;
-      const testsFailed = result.testsFailed || 0;
-  
-      // Update the popup with the stored values (or default to 0 if no values are stored)
-      document.getElementById('tests-run').textContent = testsRun;
-      document.getElementById('tests-passed').textContent = testsPassed;
-      document.getElementById('tests-failed').textContent = testsFailed;
+  // Define the raw URL of the JSON file in your GitHub repository
+  const jsonUrl = 'https://raw.githubusercontent.com/faruklmu17/ci_testing/refs/heads/main/monocart-report/index.json';
+
+  // Fetch the JSON data from GitHub
+  fetch(jsonUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch test results from GitHub.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Calculate the passed and failed tests based on the fetched data
+      const { passed, failed } = calculateResults(data);
+      const total = passed + failed;
+      const badgeColor = failed > 0 ? '#F44336' : '#4CAF50';
+      
+      // Create a more visually appealing display
+      resultsDiv.innerHTML = `
+        <div class="results-card">
+          <div class="results-header">Test Summary</div>
+          <div class="results-body">
+            <div class="stats">
+              <div class="stat-box passed">${passed} Passed</div>
+              <div class="stat-box ${failed > 0 ? 'failed' : 'failed'}" 
+                   style="${failed === 0 ? 'background: linear-gradient(135deg, #9E9E9E, #757575);' : ''}">
+                ${failed} Failed
+              </div>
+            </div>
+            <div class="total">Total: ${total} tests</div>
+            
+            <div class="badge-preview" style="background-color: ${badgeColor}; color: white;">
+              ${passed}/${failed}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .catch(error => {
+      // Handle any errors during the fetch or result processing
+      resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
     });
-  }
-  
+});
